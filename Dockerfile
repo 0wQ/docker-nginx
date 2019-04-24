@@ -2,7 +2,7 @@ FROM alpine:3.9
 
 LABEL maintainer="Mizore <me@mizore.cn>"
 
-ENV NGINX_VERSION=1.15.12 OPENSSL_VERSION=1.1.1b
+ENV NGINX_VERSION=1.16.0 OPENSSL_VERSION=1.1.1b
 
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
