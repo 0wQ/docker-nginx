@@ -2,7 +2,7 @@ FROM alpine:3.9
 
 LABEL maintainer="Mizore <me@mizore.cn>"
 
-ENV NGINX_VERSION=1.17.0 OPENSSL_VERSION=1.1.1b
+ENV NGINX_VERSION=1.17.1 OPENSSL_VERSION=1.1.1c
 
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
@@ -30,7 +30,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && mkdir -p /usr/src/openssl \
     && cd /usr/src/openssl \
     && curl -fSL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz | tar xzf - --strip-components=1 \
-    && curl -fSL https://github.com/hakasenyang/openssl-patch/raw/master/openssl-equal-${OPENSSL_VERSION}_ciphers.patch | patch -p1 \
+    && curl -fSL https://github.com/hakasenyang/openssl-patch/raw/master/openssl-equal-1.1.1b_ciphers.patch | patch -p1 \
     && curl -fSL https://github.com/hakasenyang/openssl-patch/raw/master/openssl-${OPENSSL_VERSION}-chacha_draft.patch | patch -p1 \
     \
     && cd /usr/src \
