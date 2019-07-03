@@ -1,4 +1,4 @@
-FROM alpine:3.9
+FROM alpine:3.10
 
 LABEL maintainer="Mizore <me@mizore.cn>"
 
@@ -21,7 +21,7 @@ RUN apk add --no-cache --virtual .build-deps \
         git \
     \
     && addgroup -g 82 -S www-data \
-    && adduser -u 82 -D -S -h /var/cache/nginx -G www-data www-data \
+    && adduser -S -D -H -u 82 -h /var/cache/nginx -s /sbin/nologin -G www-data -g www-data www-data \
     \
     && mkdir -p /usr/src/nginx \
     && cd /usr/src/nginx \
@@ -94,15 +94,18 @@ RUN apk add --no-cache --virtual .build-deps \
                 /var/www/html \
     && cp /etc/nginx/html/index.html /var/www/html/index.html \
     \
-    && strip /usr/sbin/nginx \
+    && strip /usr/sbin/nginx* \
     \
     && mv /etc/nginx/mime.types /tmp/mime.types \
     && rm -rf /usr/src/* \
               /etc/nginx/* \
     && mv /tmp/mime.types /etc/nginx/mime.types \
     \
+    && apk add --no-cache --virtual .gettext gettext \
+    && mv /usr/bin/envsubst /tmp/ \
+    \
     && runDeps="$( \
-        scanelf --needed --nobanner --format '%n#p' /usr/sbin/nginx \
+        scanelf --needed --nobanner --format '%n#p' /usr/sbin/nginx /tmp/envsubst \
             | tr ',' '\n' \
             | sort -u \
             | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
@@ -110,8 +113,13 @@ RUN apk add --no-cache --virtual .build-deps \
     \
     && apk add --no-cache --virtual .nginx-rundeps $runDeps \
     && apk del .build-deps \
+    \
+    && apk del .gettext \
+    && mv /tmp/envsubst /usr/local/bin/ \
+    \
     && apk add --no-cache logrotate \
     && mv /etc/periodic/daily/logrotate /etc/periodic/hourly/logrotate \
+    \
     && rm -rf /var/cache/apk/*
 
 COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
