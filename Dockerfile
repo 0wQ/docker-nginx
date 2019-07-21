@@ -4,6 +4,8 @@ LABEL maintainer="Mizore <me@mizore.cn>"
 
 ENV NGINX_VERSION=1.17.1 OPENSSL_VERSION=1.1.1c
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
         libc-dev \
@@ -116,6 +118,8 @@ RUN apk add --no-cache --virtual .build-deps \
     \
     && apk del .gettext \
     && mv /tmp/envsubst /usr/local/bin/ \
+    \
+    && apk add --no-cache tzdata \
     \
     && apk add --no-cache logrotate \
     && mv /etc/periodic/daily/logrotate /etc/periodic/hourly/logrotate \
