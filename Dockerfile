@@ -2,7 +2,7 @@ FROM alpine:3.10
 
 LABEL maintainer="Mizore <me@mizore.cn>"
 
-ENV NGINX_VERSION=1.17.1 OPENSSL_VERSION=1.1.1c
+ENV NGINX_VERSION=1.17.2 OPENSSL_VERSION=1.1.1c
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
