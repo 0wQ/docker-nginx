@@ -2,8 +2,8 @@ FROM alpine:3.10
 
 LABEL maintainer="Mizore <me@mizore.cn>"
 
-ENV NGINX_VERSION=1.17.3
-ENV OPENSSL_VERSION=1.1.1c
+ARG NGINX_VERSION=1.17.4
+ARG OPENSSL_VERSION=1.1.1d
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
@@ -33,7 +33,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && mkdir -p /usr/src/openssl \
     && cd /usr/src/openssl \
     && curl -fsSL https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz | tar xz --strip-components=1 \
-    && curl -fsSL https://github.com/hakasenyang/openssl-patch/raw/master/openssl-equal-1.1.1b_ciphers.patch | patch -p1 \
+    && curl -fsSL https://github.com/hakasenyang/openssl-patch/raw/master/openssl-equal-${OPENSSL_VERSION}_ciphers.patch | patch -p1 \
     && curl -fsSL https://github.com/hakasenyang/openssl-patch/raw/master/openssl-${OPENSSL_VERSION}-chacha_draft.patch | patch -p1 \
     \
     && cd /usr/src \
