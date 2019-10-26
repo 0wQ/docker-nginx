@@ -1,8 +1,8 @@
-FROM alpine:3.10
+FROM alpine:edge
 
 LABEL maintainer="Mizore <me@mizore.cn>"
 
-ARG NGINX_VERSION=1.17.4
+ARG NGINX_VERSION=1.17.5
 ARG OPENSSL_VERSION=1.1.1d
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
