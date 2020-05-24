@@ -1,7 +1,7 @@
 /var/log/nginx/*.log {
     hourly
-    rotate 5
-    minsize 5M
+    rotate 10
+    minsize 10M
     missingok
     dateext
     compress

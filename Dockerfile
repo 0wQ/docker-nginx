@@ -2,10 +2,10 @@ FROM alpine:edge
 
 LABEL maintainer="Mizore <me@mizore.cn>"
 
-ARG NGINX_VERSION=1.17.8
-ARG OPENSSL_VERSION=1.1.1d
+ARG NGINX_VERSION=1.18.0
+ARG OPENSSL_VERSION=1.1.1g
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
@@ -33,7 +33,6 @@ RUN apk add --no-cache --virtual .build-deps \
     && mkdir -p /usr/src/openssl \
     && cd /usr/src/openssl \
     && curl -fsSL https://github.com/openssl/openssl/archive/OpenSSL_${OPENSSL_VERSION//./_}.tar.gz | tar xz --strip-components=1 \
-    && curl -fsSL https://github.com/hakasenyang/openssl-patch/raw/master/openssl-equal-${OPENSSL_VERSION}_ciphers.patch | patch -p1 \
     \
     && cd /usr/src \
     && git clone https://github.com/cloudflare/zlib --depth 1 && cd zlib && make -f Makefile.in distclean && cd .. \
@@ -109,12 +108,13 @@ RUN apk add --no-cache --virtual .build-deps \
     && mv /usr/bin/envsubst /tmp/ \
     \
     && runDeps="$( \
-        scanelf --needed --nobanner --format '%n#p' /usr/sbin/nginx /tmp/envsubst \
-            | tr ',' '\n' \
+        scanelf --needed --nobanner /usr/sbin/nginx /tmp/envsubst \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
             | sort -u \
-            | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
     )" \
-    && apk add --no-cache --virtual .nginx-rundeps $runDeps \
+    && apk add --no-cache $runDeps \
     && apk del .build-deps .gettext \
     && mv /tmp/envsubst /usr/local/bin/ \
     \
