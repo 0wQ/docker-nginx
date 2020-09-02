@@ -29,7 +29,6 @@ RUN apk add --no-cache --virtual .build-deps \
     && mkdir -p /usr/src/nginx \
     && cd /usr/src/nginx \
     && curl -fsSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar xz --strip-components=1 \
-    && curl -fsSL https://raw.githubusercontent.com/hakasenyang/openssl-patch/master/nginx_strict-sni.patch | patch -p1 \
     \
     && mkdir -p /usr/src/openssl \
     && cd /usr/src/openssl \
