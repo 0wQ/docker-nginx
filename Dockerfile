@@ -29,6 +29,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && mkdir -p /usr/src/nginx \
     && cd /usr/src/nginx \
     && curl -fsSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar xz --strip-components=1 \
+    && curl -fsSL https://raw.githubusercontent.com/hakasenyang/openssl-patch/master/nginx_strict-sni.patch | patch -p1 \
     \
     && mkdir -p /usr/src/openssl \
     && cd /usr/src/openssl \
@@ -38,6 +39,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && git clone https://github.com/cloudflare/zlib --depth 1 && cd zlib && make -f Makefile.in distclean && cd .. \
     && git clone https://github.com/eustas/ngx_brotli --depth 1 && cd ngx_brotli && git submodule update --init --recursive && cd .. \
     && git clone https://github.com/arut/nginx-dav-ext-module --depth 1 \
+    && git clone https://github.com/openresty/headers-more-nginx-module --depth 1 \
     \
     && cd /usr/src/nginx \
     && ./configure \
@@ -89,6 +91,7 @@ RUN apk add --no-cache --virtual .build-deps \
            --without-http_memcached_module \
            --add-module=../ngx_brotli \
            --add-module=../nginx-dav-ext-module \
+           --add-module=../headers-more-nginx-module \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
     && rm -rf /etc/nginx/html/ \
