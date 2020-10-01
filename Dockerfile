@@ -2,7 +2,7 @@ FROM alpine:edge
 
 LABEL maintainer="Mizore <me@mizore.cn>"
 
-ARG NGINX_VERSION=1.19.2
+ARG NGINX_VERSION=1.19.3
 ARG OPENSSL_VERSION=1.1.1h
 
 RUN apk add --no-cache --virtual .build-deps \
