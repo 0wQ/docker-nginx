@@ -1,6 +1,6 @@
 FROM alpine:edge
 
-ARG NGINX_VERSION=1.19.3
+ARG NGINX_VERSION=1.19.5
 ARG OPENSSL_VERSION=1.1.1h
 
 RUN apk add --no-cache --virtual .build-deps \
