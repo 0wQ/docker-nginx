@@ -1,4 +1,4 @@
-FROM alpine:edge
+FROM alpine:3.13
 
 ARG NGINX_VERSION=1.19.7
 ARG OPENSSL_VERSION=1.1.1j
