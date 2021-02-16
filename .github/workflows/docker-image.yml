@@ -12,7 +12,7 @@ jobs:
     container: debian:bullseye
 
     steps:
-      - run: apt update && apt install curl
+      - run: apt update && apt install -y curl
       - run: curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
 
       - name: Check out the repo
