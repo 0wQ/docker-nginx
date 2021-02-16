@@ -9,11 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: debian:bullseye
+    container: alpine:edge
 
     steps:
-      - run: apt update && apt install -y curl
-      - run: curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
+      - run: apk add --update --no-cache docker-cli
 
       - name: Check out the repo
         uses: actions/checkout@v2
