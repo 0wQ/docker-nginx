@@ -9,9 +9,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: alpine:edge
+    container: debian:bullseye
 
     steps:
+      - run: curl -fsSL https://get.docker.com -o get-docker.sh
+      - run: sh get-docker.sh
+
       - name: Check out the repo
         uses: actions/checkout@v2
 
