@@ -12,8 +12,8 @@ jobs:
     container: debian:bullseye
 
     steps:
-      - run: curl -fsSL https://get.docker.com -o get-docker.sh
-      - run: sh get-docker.sh
+      - run: apt update && apt install curl
+      - run: curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh
 
       - name: Check out the repo
         uses: actions/checkout@v2
