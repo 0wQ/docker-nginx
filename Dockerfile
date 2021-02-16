@@ -31,7 +31,6 @@ RUN apk add --no-cache --virtual .build-deps \
     && curl -fsSL https://github.com/openssl/openssl/archive/OpenSSL_${OPENSSL_VERSION//./_}.tar.gz | tar xz --strip-components=1 \
     \
     && cd /usr/src \
-    && git clone https://github.com/cloudflare/zlib --depth 1 && cd zlib && make -f Makefile.in distclean && cd .. \
     && git clone https://github.com/eustas/ngx_brotli --depth 1 && cd ngx_brotli && git submodule update --init --recursive && cd .. \
     && git clone https://github.com/arut/nginx-dav-ext-module --depth 1 \
     && git clone https://github.com/openresty/headers-more-nginx-module --depth 1 \
@@ -73,7 +72,6 @@ RUN apk add --no-cache --virtual .build-deps \
            --with-file-aio \
            --with-libatomic \
            --with-pcre-jit \
-           --with-zlib=../zlib \
            --with-openssl=../openssl \
            --with-openssl-opt='zlib no-tests enable-ec_nistp_64_gcc_128 enable-tls1_3' \
            --with-cc-opt='-O3 -flto -fPIC -fPIE -fstack-protector-strong -Wformat -Werror=format-security -Wno-deprecated-declarations -Wno-strict-aliasing' \
