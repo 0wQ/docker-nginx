@@ -36,6 +36,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && git clone https://github.com/arut/nginx-dav-ext-module --depth 1 \
     && git clone https://github.com/openresty/headers-more-nginx-module --depth 1 \
     && git clone https://github.com/FRiCKLE/ngx_cache_purge --depth 1 \
+    && git clone https://github.com/openresty/redis2-nginx-module --depth 1 \
     \
     && cd /usr/src/nginx \
     && ./configure \
@@ -89,6 +90,7 @@ RUN apk add --no-cache --virtual .build-deps \
            --add-module=../nginx-dav-ext-module \
            --add-module=../headers-more-nginx-module \
            --add-module=../ngx_cache_purge \
+           --add-module=../redis2-nginx-module \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
     && rm -rf /etc/nginx/html/ \
