@@ -133,7 +133,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && apk del .build-deps .gettext \
     && mv /tmp/envsubst /usr/local/bin/ \
     \
-    && apk add --no-cache tzdata logrotate \
+    && apk add --no-cache tzdata logrotate libgcc\
     && mv /etc/periodic/daily/logrotate /etc/periodic/hourly/logrotate \
     \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
