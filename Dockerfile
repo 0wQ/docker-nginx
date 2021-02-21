@@ -13,6 +13,7 @@ RUN apk add --no-cache --virtual .build-deps \
         libxml2-dev \
         libxslt-dev \
         libatomic_ops-dev \
+        luajit-dev \
         linux-headers \
         patch \
         curl \
@@ -36,7 +37,9 @@ RUN apk add --no-cache --virtual .build-deps \
     && git clone https://github.com/arut/nginx-dav-ext-module --depth 1 \
     && git clone https://github.com/openresty/headers-more-nginx-module --depth 1 \
     && git clone https://github.com/FRiCKLE/ngx_cache_purge --depth 1 \
-    && git clone https://github.com/openresty/redis2-nginx-module --depth 1 \
+#     && git clone https://github.com/openresty/redis2-nginx-module --depth 1 \
+    && git clone https://github.com/vision5/ngx_devel_kit --depth 1 \
+    && git clone https://github.com/openresty/lua-nginx-module --depth 1 \
     \
     && cd /usr/src/nginx \
     && ./configure \
@@ -90,7 +93,9 @@ RUN apk add --no-cache --virtual .build-deps \
            --add-module=../nginx-dav-ext-module \
            --add-module=../headers-more-nginx-module \
            --add-module=../ngx_cache_purge \
-           --add-module=../redis2-nginx-module \
+#            --add-module=../redis2-nginx-module \
+           --add-module=../ngx_devel_kit \
+           --add-module=../lua-nginx-module \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
     && rm -rf /etc/nginx/html/ \
@@ -121,7 +126,10 @@ RUN apk add --no-cache --virtual .build-deps \
     && mv /tmp/envsubst /usr/local/bin/ \
     \
     && apk add --no-cache tzdata logrotate \
-    && mv /etc/periodic/daily/logrotate /etc/periodic/hourly/logrotate
+    && mv /etc/periodic/daily/logrotate /etc/periodic/hourly/logrotate \
+    \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY ./etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
