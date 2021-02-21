@@ -41,6 +41,9 @@ RUN apk add --no-cache --virtual .build-deps \
     && git clone https://github.com/vision5/ngx_devel_kit --depth 1 \
     && git clone https://github.com/openresty/lua-nginx-module --depth 1 \
     \
+    && export LUAJIT_LIB="$(pkgconf --variable=libdir luajit)" \
+    && export LUAJIT_INC="$(pkgconf --variable=includedir luajit)" \
+    \
     && cd /usr/src/nginx \
     && ./configure \
            --prefix=/etc/nginx \
