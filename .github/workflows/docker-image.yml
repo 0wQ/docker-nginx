@@ -5,6 +5,7 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
+  workflow_dispatch:
 
 jobs:
   multi:
@@ -31,7 +32,8 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
+#           platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: |
             mizore/nginx:latest
