@@ -49,7 +49,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && git clone https://github.com/vision5/ngx_devel_kit --depth 1 \
     && git clone https://github.com/openresty/lua-nginx-module --depth 1 \
     && git clone https://github.com/openresty/lua-resty-core --depth 1 && cp -r lua-resty-core/lib/* /usr/local/share/lua/5.1 \
-    && git clone https://github.com/openresty/lua-resty-lrucache --depth 1 cp -r lua-resty-lrucache/lib/* /usr/local/share/lua/5.1 \
+    && git clone https://github.com/openresty/lua-resty-lrucache --depth 1 && cp -r lua-resty-lrucache/lib/* /usr/local/share/lua/5.1 \
     \
     && cd /usr/src/nginx \
     && ./configure \
