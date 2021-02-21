@@ -2,6 +2,7 @@ FROM alpine:3.13
 
 ARG NGINX_VERSION=1.19.7
 ARG OPENSSL_VERSION=1.1.1j
+ARG OPENRESTY_LUAJIT_VERSION=v2.1-20201229
 
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
@@ -13,7 +14,6 @@ RUN apk add --no-cache --virtual .build-deps \
         libxml2-dev \
         libxslt-dev \
         libatomic_ops-dev \
-        luajit-dev \
         linux-headers \
         patch \
         curl \
@@ -31,6 +31,14 @@ RUN apk add --no-cache --virtual .build-deps \
     && cd /usr/src/openssl \
     && curl -fsSL https://github.com/openssl/openssl/archive/OpenSSL_${OPENSSL_VERSION//./_}.tar.gz | tar xz --strip-components=1 \
     \
+    && mkdir -p /usr/src/openresty-luajit \
+    && cd /usr/src/openresty-luajit \
+    && curl -fsSL https://github.com/openresty/luajit2/archive/${OPENRESTY_LUAJIT_VERSION}.tar.gz | tar xz --strip-components=1 \
+    && make -j$(getconf _NPROCESSORS_ONLN) \
+    && make install \
+    && export LUAJIT_LIB=/usr/local/lib \
+    && export LUAJIT_INC=/usr/local/include/luajit-2.1 \
+    \
     && cd /usr/src \
     && git clone https://github.com/cloudflare/zlib --depth 1 && cd zlib && make -f Makefile.in distclean && cd .. \
     && git clone https://github.com/eustas/ngx_brotli --depth 1 && cd ngx_brotli && git submodule update --init --recursive && cd .. \
@@ -40,9 +48,6 @@ RUN apk add --no-cache --virtual .build-deps \
 #     && git clone https://github.com/openresty/redis2-nginx-module --depth 1 \
     && git clone https://github.com/vision5/ngx_devel_kit --depth 1 \
     && git clone https://github.com/openresty/lua-nginx-module --depth 1 \
-    \
-    && export LUAJIT_LIB="$(pkgconf --variable=libdir luajit)" \
-    && export LUAJIT_INC="$(pkgconf --variable=includedir luajit)" \
     \
     && cd /usr/src/nginx \
     && ./configure \
