@@ -2,7 +2,7 @@ FROM alpine:3.13
 
 ARG NGINX_VERSION=1.21.1
 ARG OPENSSL_VERSION=1.1.1k
-ARG OPENRESTY_LUAJIT_VERSION=v2.1-20201229
+# ARG OPENRESTY_LUAJIT_VERSION=v2.1-20201229
 
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
@@ -26,32 +26,33 @@ RUN apk add --no-cache --virtual .build-deps \
     && mkdir -p /usr/src/nginx \
     && cd /usr/src/nginx \
     && curl -fsSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar xz --strip-components=1 \
+    && curl -fSL https://gist.githubusercontent.com/0wQ/2404ea3e4252ee113bb2cdd3ac1ef4c2/raw/5debc5de58b6674184639765eb754c9d267bfa03/ngx_http_autoindex_module.patch | patch -p1 \
     \
     && mkdir -p /usr/src/openssl \
     && cd /usr/src/openssl \
     && curl -fsSL https://github.com/openssl/openssl/archive/OpenSSL_${OPENSSL_VERSION//./_}.tar.gz | tar xz --strip-components=1 \
     \
-    && mkdir -p /usr/src/openresty-luajit \
-    && cd /usr/src/openresty-luajit \
-    && curl -fsSL https://github.com/openresty/luajit2/archive/${OPENRESTY_LUAJIT_VERSION}.tar.gz | tar xz --strip-components=1 \
-    && make -j$(getconf _NPROCESSORS_ONLN) \
-    && make install \
-    && export LUAJIT_LIB=/usr/local/lib \
-    && export LUAJIT_INC=/usr/local/include/luajit-2.1 \
-    \
+    # && mkdir -p /usr/src/openresty-luajit \
+    # && cd /usr/src/openresty-luajit \
+    # && curl -fsSL https://github.com/openresty/luajit2/archive/${OPENRESTY_LUAJIT_VERSION}.tar.gz | tar xz --strip-components=1 \
+    # && make -j$(getconf _NPROCESSORS_ONLN) \
+    # && make install \
+    # && export LUAJIT_LIB=/usr/local/lib \
+    # && export LUAJIT_INC=/usr/local/include/luajit-2.1 \
+    # \
     && cd /usr/src \
     && git clone https://github.com/cloudflare/zlib --depth 1 && cd zlib && make -f Makefile.in distclean && cd .. \
     && git clone https://github.com/eustas/ngx_brotli --depth 1 && cd ngx_brotli && git submodule update --init --recursive && cd .. \
     && git clone https://github.com/arut/nginx-dav-ext-module --depth 1 \
     && git clone https://github.com/openresty/headers-more-nginx-module --depth 1 \
     && git clone https://github.com/FRiCKLE/ngx_cache_purge --depth 1 \
-#     && git clone https://github.com/openresty/redis2-nginx-module --depth 1 \
-    && git clone https://github.com/vision5/ngx_devel_kit --depth 1 \
-    && git clone https://github.com/openresty/lua-nginx-module --depth 1 \
-    \
-    && git clone https://github.com/openresty/lua-resty-core --depth 1 && cp -r lua-resty-core/lib/* /usr/local/share/lua/5.1 \
-    && git clone https://github.com/openresty/lua-resty-lrucache --depth 1 && cp -r lua-resty-lrucache/lib/* /usr/local/share/lua/5.1 \
-    && git clone https://github.com/openresty/lua-resty-redis --depth 1 && cp -r lua-resty-redis/lib/* /usr/local/share/lua/5.1 \
+    # && git clone https://github.com/openresty/redis2-nginx-module --depth 1 \
+    # && git clone https://github.com/vision5/ngx_devel_kit --depth 1 \
+    # && git clone https://github.com/openresty/lua-nginx-module --depth 1 \
+    # \
+    # && git clone https://github.com/openresty/lua-resty-core --depth 1 && cp -r lua-resty-core/lib/* /usr/local/share/lua/5.1 \
+    # && git clone https://github.com/openresty/lua-resty-lrucache --depth 1 && cp -r lua-resty-lrucache/lib/* /usr/local/share/lua/5.1 \
+    # && git clone https://github.com/openresty/lua-resty-redis --depth 1 && cp -r lua-resty-redis/lib/* /usr/local/share/lua/5.1 \
     \
     && cd /usr/src/nginx \
     && ./configure \
@@ -105,9 +106,9 @@ RUN apk add --no-cache --virtual .build-deps \
            --add-module=../nginx-dav-ext-module \
            --add-module=../headers-more-nginx-module \
            --add-module=../ngx_cache_purge \
-#            --add-module=../redis2-nginx-module \
-           --add-module=../ngx_devel_kit \
-           --add-module=../lua-nginx-module \
+        #    --add-module=../redis2-nginx-module \
+        #    --add-module=../ngx_devel_kit \
+        #    --add-module=../lua-nginx-module \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
     && rm -rf /etc/nginx/html/ \
