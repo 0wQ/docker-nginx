@@ -19,7 +19,7 @@ RUN apk add --no-cache --virtual .build-deps \
         perl \
         git \
     \
-    && addgroup -g 82 -S www-data \
+    # && addgroup -g 82 -S www-data \
     && adduser -S -D -H -u 82 -h /var/cache/nginx -s /sbin/nologin -G www-data -g www-data www-data \
     \
     && mkdir -p /tmp/build/nginx && cd /tmp/build/nginx \
