@@ -22,13 +22,11 @@ RUN apk add --no-cache --virtual .build-deps \
     && addgroup -g 82 -S www-data \
     && adduser -S -D -H -u 82 -h /var/cache/nginx -s /sbin/nologin -G www-data -g www-data www-data \
     \
-    && mkdir -p /tmp/build/nginx \
-    && cd /tmp/build/nginx \
+    && mkdir -p /tmp/build/nginx && cd /tmp/build/nginx \
     && curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar xz --strip-components=1 \
     && curl -fSL https://gist.githubusercontent.com/0wQ/2404ea3e4252ee113bb2cdd3ac1ef4c2/raw/5debc5de58b6674184639765eb754c9d267bfa03/ngx_http_autoindex_module.patch | patch -p1 \
     \
-    && mkdir -p /tmp/build/openssl \
-    && cd /tmp/build/openssl \
+    && mkdir -p /tmp/build/openssl && cd /tmp/build/openssl \
     && curl -fSL https://github.com/openssl/openssl/archive/OpenSSL_${OPENSSL_VERSION//./_}.tar.gz | tar xz --strip-components=1 \
     \
     && cd /tmp/build \
@@ -119,7 +117,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && apk del .build-deps .gettext \
     && mv /tmp/envsubst /usr/local/bin/ \
     \
-    && apk add --no-cache tzdata logrotate\
+    && apk add --no-cache tzdata logrotate \
     && mv /etc/periodic/daily/logrotate /etc/periodic/hourly/logrotate \
     \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
