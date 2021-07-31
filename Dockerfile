@@ -1,8 +1,7 @@
-FROM alpine:3.13
+FROM alpine:3.14
 
 ARG NGINX_VERSION=1.21.1
 ARG OPENSSL_VERSION=1.1.1k
-# ARG OPENRESTY_LUAJIT_VERSION=v2.1-20201229
 
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
@@ -23,38 +22,23 @@ RUN apk add --no-cache --virtual .build-deps \
     && addgroup -g 82 -S www-data \
     && adduser -S -D -H -u 82 -h /var/cache/nginx -s /sbin/nologin -G www-data -g www-data www-data \
     \
-    && mkdir -p /usr/src/nginx \
-    && cd /usr/src/nginx \
-    && curl -fsSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar xz --strip-components=1 \
+    && mkdir -p /tmp/build/nginx \
+    && cd /tmp/build/nginx \
+    && curl -fSL https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz | tar xz --strip-components=1 \
     && curl -fSL https://gist.githubusercontent.com/0wQ/2404ea3e4252ee113bb2cdd3ac1ef4c2/raw/5debc5de58b6674184639765eb754c9d267bfa03/ngx_http_autoindex_module.patch | patch -p1 \
     \
-    && mkdir -p /usr/src/openssl \
-    && cd /usr/src/openssl \
-    && curl -fsSL https://github.com/openssl/openssl/archive/OpenSSL_${OPENSSL_VERSION//./_}.tar.gz | tar xz --strip-components=1 \
+    && mkdir -p /tmp/build/openssl \
+    && cd /tmp/build/openssl \
+    && curl -fSL https://github.com/openssl/openssl/archive/OpenSSL_${OPENSSL_VERSION//./_}.tar.gz | tar xz --strip-components=1 \
     \
-    # && mkdir -p /usr/src/openresty-luajit \
-    # && cd /usr/src/openresty-luajit \
-    # && curl -fsSL https://github.com/openresty/luajit2/archive/${OPENRESTY_LUAJIT_VERSION}.tar.gz | tar xz --strip-components=1 \
-    # && make -j$(getconf _NPROCESSORS_ONLN) \
-    # && make install \
-    # && export LUAJIT_LIB=/usr/local/lib \
-    # && export LUAJIT_INC=/usr/local/include/luajit-2.1 \
-    # \
-    && cd /usr/src \
+    && cd /tmp/build \
     && git clone https://github.com/cloudflare/zlib --depth 1 && cd zlib && make -f Makefile.in distclean && cd .. \
     && git clone https://github.com/eustas/ngx_brotli --depth 1 && cd ngx_brotli && git submodule update --init --recursive && cd .. \
     && git clone https://github.com/arut/nginx-dav-ext-module --depth 1 \
     && git clone https://github.com/openresty/headers-more-nginx-module --depth 1 \
     && git clone https://github.com/FRiCKLE/ngx_cache_purge --depth 1 \
-    # && git clone https://github.com/openresty/redis2-nginx-module --depth 1 \
-    # && git clone https://github.com/vision5/ngx_devel_kit --depth 1 \
-    # && git clone https://github.com/openresty/lua-nginx-module --depth 1 \
-    # \
-    # && git clone https://github.com/openresty/lua-resty-core --depth 1 && cp -r lua-resty-core/lib/* /usr/local/share/lua/5.1 \
-    # && git clone https://github.com/openresty/lua-resty-lrucache --depth 1 && cp -r lua-resty-lrucache/lib/* /usr/local/share/lua/5.1 \
-    # && git clone https://github.com/openresty/lua-resty-redis --depth 1 && cp -r lua-resty-redis/lib/* /usr/local/share/lua/5.1 \
     \
-    && cd /usr/src/nginx \
+    && cd /tmp/build/nginx \
     && ./configure \
            --prefix=/etc/nginx \
            --sbin-path=/usr/sbin/nginx \
@@ -106,9 +90,6 @@ RUN apk add --no-cache --virtual .build-deps \
            --add-module=../nginx-dav-ext-module \
            --add-module=../headers-more-nginx-module \
            --add-module=../ngx_cache_purge \
-        #    --add-module=../redis2-nginx-module \
-        #    --add-module=../ngx_devel_kit \
-        #    --add-module=../lua-nginx-module \
     && make -j$(getconf _NPROCESSORS_ONLN) \
     && make install \
     && rm -rf /etc/nginx/html/ \
@@ -122,7 +103,7 @@ RUN apk add --no-cache --virtual .build-deps \
                 /var/cache/nginx/scgi_temp \
     && install -m644 html/index.html /var/www/html/ \
     && strip /usr/sbin/nginx* \
-    && rm -rf /usr/src/* \
+    && rm -rf /tmp/build \
     \
     && apk add --no-cache --virtual .gettext gettext \
     && mv /usr/bin/envsubst /tmp/ \
@@ -138,7 +119,7 @@ RUN apk add --no-cache --virtual .build-deps \
     && apk del .build-deps .gettext \
     && mv /tmp/envsubst /usr/local/bin/ \
     \
-    && apk add --no-cache tzdata logrotate libgcc\
+    && apk add --no-cache tzdata logrotate\
     && mv /etc/periodic/daily/logrotate /etc/periodic/hourly/logrotate \
     \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
