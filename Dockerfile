@@ -101,6 +101,7 @@ RUN apk add --no-cache --virtual .build-deps \
                 /var/cache/nginx/scgi_temp \
     && install -m644 html/index.html /var/www/html/ \
     && strip /usr/sbin/nginx* \
+    && apk del .build-deps \
     && rm -rf /tmp/build \
     \
     && apk add --no-cache --virtual .gettext gettext \
@@ -114,10 +115,10 @@ RUN apk add --no-cache --virtual .build-deps \
             | sort -u \
     )" \
     && apk add --no-cache $runDeps \
-    && apk del .build-deps .gettext \
+    && apk del .gettext \
     && mv /tmp/envsubst /usr/local/bin/ \
     \
-    && apk add --no-cache tzdata logrotate \
+    && apk add --no-cache tzdata logrotate curl ca-certificates \
     && mv /etc/periodic/daily/logrotate /etc/periodic/hourly/logrotate \
     \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
@@ -131,6 +132,6 @@ WORKDIR /var/www/html
 
 EXPOSE 80
 
-STOPSIGNAL SIGTERM
+STOPSIGNAL SIGQUIT
 
 CMD ["sh", "-c", "crond && exec nginx -g 'daemon off;'"]
