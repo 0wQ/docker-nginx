@@ -101,7 +101,6 @@ RUN apk add --no-cache --virtual .build-deps \
                 /var/cache/nginx/scgi_temp \
     && install -m644 html/index.html /var/www/html/ \
     && strip /usr/sbin/nginx* \
-    && apk del .build-deps \
     && rm -rf /tmp/build \
     \
     && apk add --no-cache --virtual .gettext gettext \
@@ -115,7 +114,7 @@ RUN apk add --no-cache --virtual .build-deps \
             | sort -u \
     )" \
     && apk add --no-cache $runDeps \
-    && apk del .gettext \
+    && apk del .build-deps .gettext \
     && mv /tmp/envsubst /usr/local/bin/ \
     \
     && apk add --no-cache tzdata logrotate curl ca-certificates \
