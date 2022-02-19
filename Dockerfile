@@ -1,7 +1,7 @@
 FROM alpine:3.15
 
-ARG NGINX_VERSION=1.21.4
-ARG OPENSSL_VERSION=1.1.1l
+ARG NGINX_VERSION=1.21.6
+ARG OPENSSL_VERSION=1.1.1m
 
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
