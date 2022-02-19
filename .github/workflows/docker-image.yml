@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKERHUB_REPO: mizore/nginx
+  DOCKERHUB_REPO: ${{ secrets.DOCKERHUB_USERNAME }}/nginx
 
 jobs:
   multi1:
