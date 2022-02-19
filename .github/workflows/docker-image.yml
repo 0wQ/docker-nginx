@@ -6,7 +6,6 @@ on:
   workflow_dispatch:
 
 env:
-  APP_NAME: httpproxy
   DOCKERHUB_REPO: mizore/nginx
 
 jobs:
