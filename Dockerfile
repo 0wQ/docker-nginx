@@ -1,7 +1,7 @@
-FROM alpine:3.15
+FROM alpine:3.16
 
-ARG NGINX_VERSION=1.21.6
-ARG OPENSSL_VERSION=1.1.1m
+ARG NGINX_VERSION=1.23.1
+ARG OPENSSL_VERSION=1.1.1q
 
 RUN apk add --no-cache --virtual .build-deps \
         gcc \
@@ -32,7 +32,6 @@ RUN apk add --no-cache --virtual .build-deps \
     && cd /tmp/build \
     && git clone https://github.com/cloudflare/zlib --depth 1 && cd zlib && make -f Makefile.in distclean && cd .. \
     && git clone https://github.com/eustas/ngx_brotli --depth 1 && cd ngx_brotli && git submodule update --init --recursive && cd .. \
-    && git clone https://github.com/arut/nginx-dav-ext-module --depth 1 \
     && git clone https://github.com/openresty/headers-more-nginx-module --depth 1 \
     && git clone https://github.com/FRiCKLE/ngx_cache_purge --depth 1 \
     \
@@ -46,18 +45,15 @@ RUN apk add --no-cache --virtual .build-deps \
            --http-log-path=/var/log/nginx/access.log \
            --pid-path=/var/run/nginx.pid \
            --lock-path=/var/run/nginx.lock \
-           --http-client-body-temp-path=/var/cache/nginx/client_temp \
+           --http-client-body-temp-path=/var/cache/nginx/client_body_temp \
            --http-proxy-temp-path=/var/cache/nginx/proxy_temp \
            --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
-           --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
-           --http-scgi-temp-path=/var/cache/nginx/scgi_temp \
            --user=www-data \
            --group=www-data \
            --with-http_ssl_module \
            --with-http_v2_module \
            --with-http_realip_module \
            --with-http_sub_module \
-           --with-http_dav_module \
            --with-http_gunzip_module \
            --with-http_gzip_static_module \
            --with-http_random_index_module \
@@ -85,7 +81,6 @@ RUN apk add --no-cache --virtual .build-deps \
            --without-http_scgi_module \
            --without-http_memcached_module \
            --add-module=../ngx_brotli \
-           --add-module=../nginx-dav-ext-module \
            --add-module=../headers-more-nginx-module \
            --add-module=../ngx_cache_purge \
     && make -j$(getconf _NPROCESSORS_ONLN) \
@@ -94,11 +89,9 @@ RUN apk add --no-cache --virtual .build-deps \
     && mkdir -p /var/www/html \
                 /etc/nginx/conf.d \
                 /var/log/nginx/old \
-                /var/cache/nginx/client_temp \
+                /var/cache/nginx/client_body_temp \
                 /var/cache/nginx/proxy_temp \
                 /var/cache/nginx/fastcgi_temp \
-                /var/cache/nginx/uwsgi_temp \
-                /var/cache/nginx/scgi_temp \
     && install -m644 html/index.html /var/www/html/ \
     && strip /usr/sbin/nginx* \
     && rm -rf /tmp/build \
