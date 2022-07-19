@@ -30,7 +30,7 @@ RUN apk add --no-cache --virtual .build-deps \
     \
     && cd /tmp/build \
     && git clone https://github.com/cloudflare/zlib --depth 1 && cd zlib && make -f Makefile.in distclean && cd .. \
-    && git clone https://github.com/eustas/ngx_brotli --depth 1 && cd ngx_brotli && git submodule update --init --recursive && cd .. \
+    && git clone https://github.com/google/ngx_brotli --depth 1 && cd ngx_brotli && git submodule update --init --recursive && cd .. \
     && git clone https://github.com/openresty/headers-more-nginx-module --depth 1 \
     && git clone https://github.com/FRiCKLE/ngx_cache_purge --depth 1 \
     \
