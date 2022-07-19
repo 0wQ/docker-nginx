@@ -1,6 +1,6 @@
 FROM alpine:3.16
 
-ARG NGINX_VERSION=1.23.1
+ARG NGINX_VERSION=1.23.0
 ARG OPENSSL_VERSION=1.1.1q
 
 RUN apk add --no-cache --virtual .build-deps \
@@ -19,7 +19,6 @@ RUN apk add --no-cache --virtual .build-deps \
         perl \
         git \
     \
-    # && addgroup -g 82 -S www-data \
     && adduser -S -D -H -u 82 -h /var/cache/nginx -s /sbin/nologin -G www-data -g www-data www-data \
     \
     && mkdir -p /tmp/build/nginx && cd /tmp/build/nginx \
